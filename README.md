@@ -12,7 +12,7 @@ This project is a simple stopwatch application built with React that helped me g
   - `laps`: Array state to store lap timestamps
 - Practiced updating state both directly and using the previous state value
 - Understood the importance of state immutability when working with arrays (using spread operator for lap updates)
-- Learned about persisted state across reloads using a function:
+- Learned about lazy state initialization using a function:
   ```jsx
   const [laps, setLaps] = useState(() => {
     const savedLaps = localStorage.getItem("laps");
@@ -41,10 +41,27 @@ This project is a simple stopwatch application built with React that helped me g
   }, [continueTimer]);
   ```
 
-### 3. Working with setInterval
-- Learned how to create recurring timer updates using `setInterval`
-- Understood the importance of cleanup using `clearInterval` to prevent memory leaks
+### 3. Working with setInterval in useEffect
+- Learned how to create recurring timer updates using `setInterval` inside useEffect
+- Discovered the pattern for updating state at regular intervals:
+  ```jsx
+  useEffect(() => {
+    let time;
+    if (continueTimer) {
+      time = setInterval(() => {
+        setTimer(prevTimer => prevTimer + 1);
+      }, 1000);
+    }
+    return () => clearInterval(time);
+  }, [continueTimer]);
+  ```
+- Understood why setInterval needs to be wrapped in useEffect:
+  - Ensures proper cleanup between renders
+  - Prevents multiple intervals from running simultaneously
+  - Allows for controlled starting/stopping based on dependencies
+- Learned about the importance of cleanup using `clearInterval` to prevent memory leaks
 - Gained experience with timing precision and state updates in intervals
+- Understood the relationship between the interval time (1000ms) and state updates
 
 ### 4. Component Organization
 - Created separate components for better code organization (App.jsx and Lap.jsx)
